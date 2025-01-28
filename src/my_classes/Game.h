@@ -12,7 +12,7 @@
 class Game
 {
 public:
-    Game(int w, int h) : window_width(w), window_height(h), cnt(0), lost(0), win(0), window(nullptr), gameOver_texture(nullptr) {}
+    Game() :cnt(0), begin(false),lost(0), win(0), window(nullptr), gameOver_texture(nullptr) {}
     ~Game();
 
     void init(const char *title, int xpos, int ypos, bool fullscreen);
@@ -24,11 +24,10 @@ public:
     bool isNotGameOver() { return !(lost||win); }
     void gameOver_loadTexture(SDL_Renderer *tex_renderer);
     static SDL_Renderer *renderer;
-
 private:
-    int cnt, window_width, window_height;
+    int cnt;
     bool isRunning;
-    bool lost, win;
+    bool begin, lost, win;
     SDL_Window *window;
     SDL_Texture *gameOver_texture;
 };

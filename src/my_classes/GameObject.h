@@ -8,6 +8,7 @@
 #define LEFT 3
 #define RIGHT 4
 
+
 class GameObject
 {
 public:
@@ -36,18 +37,20 @@ public:
     void increase_size(int val) { size += val; }
     int get_size() { return size; }
     void updateBody();
+    bool check_self_collision() { return self_collision;}
     SDL_Rect head;
     std::deque<SDL_Rect> rq;
 
 private:
     int dir, size;
     int xpos, ypos;
+    bool self_collision;
 };
 
 class Apple : public GameObject
 {
 public:
-    Apple(SDL_Renderer *a_rend) : GameObject(a_rend) {}
+    Apple(SDL_Renderer *a_rend) : GameObject(a_rend), cnt(0) {}
     ~Apple() = default;
     virtual void Update() override = 0;
     virtual void Render() override = 0;
@@ -59,7 +62,7 @@ public:
     int get_snake_x() {return snake_x;}
     int get_snake_y() {return snake_y;}
     void setCnt(int n) { cnt = n;}
-    void increaseCnt(int n) { cnt += n;}
+    void increaseCnt() { cnt ++;}
     int getCnt() { return cnt; }
     std::vector<SDL_Rect> vect_Apples;
 

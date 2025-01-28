@@ -8,7 +8,7 @@ int main(int argc,char* argv[])
 
     Uint32 frameStart;
     int frameTime;
-    game = new Game(800, 640);
+    game = new Game();
     game-> init("Snake Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, false);
 
     while(game->running() && game->isNotGameOver())

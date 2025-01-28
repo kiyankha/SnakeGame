@@ -1,7 +1,5 @@
 #include "Game.h"
-#include "TextureManager.h"
 #include "GameObject.h"
-#include "Map.h"
 
 SDL_Texture *playerTex;
 SDL_Rect srcR, destR;
@@ -11,7 +9,6 @@ Snake *snake_ptr;
 Apple *apples_ptr;
 RedApple *red_apple;
 YellowApple *yellow_apple;
-Map *map;
 
 Game::~Game() {}
 
@@ -24,19 +21,19 @@ void Game::init(const char *title, int xpos, int ypos, bool fullscreen)
     }
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
-        std::cout << "Subsytems Initialized" << std::endl;
+        std::cout << "1.Subsytems Initialized" << std::endl;
 
-        window = SDL_CreateWindow(title, xpos, ypos, window_width, window_height, flags);
+        window = SDL_CreateWindow(title, xpos, ypos, 800, 640, flags);
         if (window)
         {
-            std::cout << "Window Created" << std::endl;
+            std::cout << "2.Window Created" << std::endl;
         }
 
         renderer = SDL_CreateRenderer(window, -1, 0);
         if (renderer)
         {
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-            std::cout << "Renderer Created" << std::endl;
+            std::cout << "3.Renderer Created" << std::endl;
         }
         isRunning = true;
     }
@@ -74,6 +71,7 @@ void Game::handleEvents()
         {
             snake_ptr->set_dir(RIGHT);
         }
+        begin = true;
         break;
     default:
         break;
@@ -83,19 +81,22 @@ void Game::update()
 {
     snake_ptr = dynamic_cast<Snake *>(snake);
     snake_ptr->Update();
+    red_apple->Update();
+    
     red_apple->set_snake_position(snake_ptr->get_head_x(), snake_ptr->get_head_y());
     yellow_apple->set_snake_position(snake_ptr->get_head_x(), snake_ptr->get_head_y());
 
     red_apple->Update();
-    
+
     for (int c = 0; c < red_apple->getCnt(); c++)
     {
         snake_ptr->increase_size(10);
-        // std::cout << "Snake size increased! New size: " << snake_ptr->get_size() << std::endl;
     }
-
+    red_apple->setCnt(0);
     yellow_apple->Update();
-    if (yellow_apple->getCnt() == -1)
+    snake_ptr->updateBody();
+
+    if (yellow_apple->getCnt() == -1 || (begin && snake_ptr->check_self_collision()))
     {
         lost = 1;
     }
@@ -106,13 +107,9 @@ void Game::update()
         {
             win = 1;
         }
-    }
-    snake_ptr->updateBody();
-    
-    // std::cout << "Apples-> Red:" << red_apple->vect_Apples.size() << "\tYellow:" << yellow_apple->vect_Apples.size() << std::endl;
-    // std::cout << "Snake Head: (" << snake_ptr->get_head_x() << ", " << snake_ptr->get_head_y() << ")" << std::endl;
-    // std::cout << "Snake Body Size: " << snake_ptr->rq.size() << std::endl;
+    }   
 }
+
 void Game::render()
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -121,11 +118,11 @@ void Game::render()
     red_apple->Render();
     yellow_apple->Render();
 }
+
 void Game::clean()
 {
     if (!isNotGameOver())
     {
-        std::cout << "here game over" << std::endl;
         gameOver_loadTexture(renderer);
     }
     SDL_DestroyWindow(window);
@@ -158,18 +155,18 @@ void Game::gameOver_loadTexture(SDL_Renderer *tex_renderer)
         }
     }
     SDL_QueryTexture(gameOver_texture, NULL, NULL, &GO_w, &GO_h);
-    float scale = std::min((float)window_width / GO_w, (float)window_height / GO_h);
+    float scale = std::min((float)800 / GO_w, (float)640 / GO_h);
     int scaledWidth = GO_w * scale;
     int scaledHeight = GO_h * scale;
 
     SDL_Rect imgRect = {
-        (window_width - scaledWidth) / 2,
-        (window_height - scaledHeight) / 2,
+        (800 - scaledWidth) / 2,
+        (640 - scaledHeight) / 2,
         scaledWidth,
         scaledHeight};
 
     SDL_RenderCopy(renderer, gameOver_texture, NULL, &imgRect);
     SDL_RenderPresent(renderer);
-    SDL_Delay(2000);
+    SDL_Delay(5000);
     SDL_DestroyTexture(gameOver_texture);
 }
