@@ -1,8 +1,6 @@
 #include "Game.h"
 #include "GameObject.h"
 
-SDL_Texture *playerTex;
-SDL_Rect srcR, destR;
 SDL_Renderer *Game::renderer = nullptr;
 GameObject *snake, *apples;
 Snake *snake_ptr;
@@ -77,11 +75,11 @@ void Game::handleEvents()
         break;
     }
 }
+
 void Game::update()
 {
     snake_ptr = dynamic_cast<Snake *>(snake);
     snake_ptr->Update();
-    red_apple->Update();
     
     red_apple->set_snake_position(snake_ptr->get_head_x(), snake_ptr->get_head_y());
     yellow_apple->set_snake_position(snake_ptr->get_head_x(), snake_ptr->get_head_y());

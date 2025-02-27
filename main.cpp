@@ -1,3 +1,4 @@
+//AP Final Project Kian Khatibi, Koroosh Solat, Koroosh Memari, Elina Abrishami
 #include "Game.h"
 
 Game *game = nullptr;
